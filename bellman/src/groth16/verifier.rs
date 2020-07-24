@@ -2,9 +2,12 @@ use group::{cofactor::CofactorCurveAffine, Curve};
 use pairing::{MillerLoopResult, MultiMillerLoop};
 use std::ops::{AddAssign, Neg};
 
-use super::{PreparedVerifyingKey, Proof, VerifyingKey};
+use crate::{
+    groth16::{PreparedVerifyingKey, Proof, VerifyingKey},
+    VerificationError,
+};
 
-use crate::VerificationError;
+pub mod batch;
 
 pub fn prepare_verifying_key<E: MultiMillerLoop>(vk: &VerifyingKey<E>) -> PreparedVerifyingKey<E> {
     let gamma = vk.gamma_g2.neg();
@@ -28,7 +31,6 @@ pub fn verify_proof<'a, E: MultiMillerLoop>(
     }
 
     let mut acc = pvk.ic[0].to_curve();
-
     for (i, b) in public_inputs.iter().zip(pvk.ic.iter().skip(1)) {
         AddAssign::<&E::G1>::add_assign(&mut acc, &(*b * i));
     }
