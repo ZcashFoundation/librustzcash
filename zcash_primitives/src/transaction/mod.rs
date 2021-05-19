@@ -512,10 +512,24 @@ impl Transaction {
         self.txid
     }
 
+    pub fn sighash(
+        &self,
+        signable_input: sighash::SignableInput,
+        hash_type: u32,
+    ) -> sighash::SignatureHash {
+        sighash::signature_hash(
+            self.deref(),
+            signable_input,
+            &self.data.digest(TxIdDigester),
+            hash_type,
+        )
+    }
+
     pub fn read<R: Read>(reader: R, consensus_branch_id: BranchId) -> io::Result<Self> {
         let mut reader = HashReader::new(reader);
 
         let version = TxVersion::read(&mut reader)?;
+
         match version {
             TxVersion::Sprout(_) | TxVersion::Overwinter | TxVersion::Sapling => {
                 Self::read_v4(reader, version, consensus_branch_id)
