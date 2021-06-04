@@ -639,8 +639,11 @@ impl Transaction {
         let sapling_bundle = Self::read_v5_sapling(&mut reader)?;
         let orchard_bundle = Self::read_v5_orchard(&mut reader)?;
 
-        #[cfg(feature = "zfuture")]
-        let tze_bundle = Self::read_tze(&mut reader)?;
+        let tze_bundle = if version.has_tze() {
+            Self::read_tze(&mut reader)?
+        } else {
+            None
+        };
 
         let data = TransactionData {
             version,
