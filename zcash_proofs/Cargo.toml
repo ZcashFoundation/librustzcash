@@ -36,7 +36,7 @@ rand_xorshift = "0.3"
 [features]
 default = ["local-prover", "multicore"]
 bundled-prover = ["wagyu-zcash-parameters"]
-download-params = ["minreq"]
+download-params = ["minreq", "directories"]
 local-prover = ["directories"]
 multicore = ["bellman/multicore"]
 
